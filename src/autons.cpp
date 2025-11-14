@@ -51,6 +51,17 @@ void default_constants() {
 ///
 // Drive Example
 ///
+
+void drive_forward() {
+  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+}
+
+void drive_backward() {
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED, true);
+  chassis.pid_wait();
+}
+
 void drive_example() {
   // The first parameter is target inches
   // The second parameter is max speed the robot will drive at
@@ -371,10 +382,42 @@ void measure_offsets() {
   if (chassis.odom_tracker_right != nullptr) chassis.odom_tracker_right->distance_to_center_set(r_offset);
   if (chassis.odom_tracker_back != nullptr) chassis.odom_tracker_back->distance_to_center_set(b_offset);
   if (chassis.odom_tracker_front != nullptr) chassis.odom_tracker_front->distance_to_center_set(f_offset);
-
-
 }
 
 // . . .
 // Make your own autonomous functions here!
 // . . .
+void intake() {
+  cout << "Intake activated!" << endl;
+}
+
+void for_intake(int[] index) {
+
+  for (int i = 0; i < index.length; i++) {
+
+    chassis.pid_wait_until_index(index[i]);
+    intake();
+
+  }
+
+  chassis.pid_wait();
+
+}
+
+void loukas_auton() {
+
+  chassis.odom_xyt_set_xyt(-63.104_in, 19.968_in, 180_deg);
+
+  chassis.pid_odom_smooth_pp_set({{{-63.104_in, 19.968_in}, fwd, 110},
+                                    {{-65_in, 0.94_in}, fwd, 110}, 
+                                    {{-28.396_in, -47.063_in}, fwd, 110}},
+                                    true);
+
+
+  int[] index = {1};
+
+  for_intake(index);
+
+  chassis.pid_wait();
+
+}
